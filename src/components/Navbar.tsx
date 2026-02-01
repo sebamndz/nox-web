@@ -1,39 +1,38 @@
-import { Link } from 'react-router-dom'
-import { useCart } from '../context/CartContext'
+import { Link, NavLink } from "react-router-dom"
+import Container from "./Container"
+import { useCart } from "../context/CartContext"
 
-function Navbar() {
+export default function Navbar() {
   const { items } = useCart()
+  const totalItems = items.reduce((sum, i) => sum + i.quantity, 0)
 
-  const totalItems = items.reduce(
-    (sum, item) => sum + item.quantity,
-    0
-  )
+  const linkClass = ({ isActive }: { isActive: boolean }) =>
+    `text-xs uppercase tracking-[0.25em] transition ${
+      isActive ? "text-white" : "text-white/60 hover:text-white"
+    }`
 
   return (
-    <header className="border-b border-white/10">
-      <nav className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-        <Link to="/" className="text-xl font-bold tracking-widest">
+    <header className="sticky top-0 z-50 bg-black/60 backdrop-blur border-b border-white/10">
+      <Container className="py-4 flex items-center justify-between">
+        <Link to="/" className="text-lg font-bold tracking-[0.35em] uppercase">
           NOX
         </Link>
 
-        <ul className="flex gap-6 text-sm uppercase items-center">
-          <li>
-            <Link to="/shop">Shop</Link>
-          </li>
-          <li>
-            <Link to="/cart" className="relative">
-              Cart
-              {totalItems > 0 && (
-                <span className="absolute -top-2 -right-3 bg-white text-black text-xs w-5 h-5 flex items-center justify-center rounded-full">
-                  {totalItems}
-                </span>
-              )}
-            </Link>
-          </li>
-        </ul>
-      </nav>
+        <nav className="hidden md:flex items-center gap-8">
+          <NavLink to="/" className={linkClass}>Home</NavLink>
+          <NavLink to="/shop" className={linkClass}>Shop</NavLink>
+          <NavLink to="/cart" className={linkClass}>
+            Cart {totalItems > 0 && `(${totalItems})`}
+          </NavLink>
+        </nav>
+
+        <Link
+          to="/shop"
+          className="text-xs uppercase tracking-[0.25em] border border-white/15 rounded-full px-4 py-2 hover:border-white/30 hover:bg-white/5 transition"
+        >
+          Explore
+        </Link>
+      </Container>
     </header>
   )
 }
-
-export default Navbar
